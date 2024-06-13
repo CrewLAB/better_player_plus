@@ -192,7 +192,6 @@ class _ProgressBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print('_ProgressBarPainter: $size');
     const barHeight = 5.0;
     const handleHeight = 6.0;
     final baseOffset = size.height / 2 - barHeight / 2.0;
@@ -210,6 +209,7 @@ class _ProgressBarPainter extends CustomPainter {
     if (!value.initialized) {
       return;
     }
+
     double playedPartPercent = value.position.inMilliseconds / value.duration!.inMilliseconds;
     if (playedPartPercent.isNaN) {
       playedPartPercent = 0;

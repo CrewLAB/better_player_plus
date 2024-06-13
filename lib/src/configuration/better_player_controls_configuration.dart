@@ -27,6 +27,9 @@ class BetterPlayerControlsConfiguration {
   ///Icon of unmute
   final IconData unMuteIcon;
 
+  ///Icon of close button
+  final IconData closeIcon;
+
   ///Icon of fullscreen mode enable
   final IconData fullscreenEnableIcon;
 
@@ -44,6 +47,9 @@ class BetterPlayerControlsConfiguration {
 
   ///Flag used to enable/disable mute
   final bool enableMute;
+
+  ///Flag used to enable/disable close
+  final bool enableClose;
 
   ///Flag used to enable/disable progress texts
   final bool enableProgressText;
@@ -76,8 +82,11 @@ class BetterPlayerControlsConfiguration {
   final Duration controlsHideTime;
 
   ///Parameter used to build custom controls
-  final Widget Function(BetterPlayerController controller,
-      Function(bool) onPlayerVisibilityChanged)? customControlsBuilder;
+  final Widget Function(BetterPlayerController controller, Function(bool) onPlayerVisibilityChanged)?
+      customControlsBuilder;
+
+  /// Custom callback for when tapping on the close button
+  final VoidCallback? onCloseTap;
 
   ///Parameter used to change theme of the player
   final BetterPlayerTheme? playerTheme;
@@ -165,16 +174,18 @@ class BetterPlayerControlsConfiguration {
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
     this.iconsColor = Colors.white,
-    this.playIcon = Icons.play_arrow_outlined,
+    this.playIcon = Icons.play_arrow,
     this.pauseIcon = Icons.pause_outlined,
     this.muteIcon = Icons.volume_up_outlined,
     this.unMuteIcon = Icons.volume_off_outlined,
+    this.closeIcon = Icons.close,
     this.fullscreenEnableIcon = Icons.fullscreen_outlined,
     this.fullscreenDisableIcon = Icons.fullscreen_exit_outlined,
     this.skipBackIcon = Icons.replay_10_outlined,
     this.skipForwardIcon = Icons.forward_10_outlined,
     this.enableFullscreen = true,
     this.enableMute = true,
+    this.enableClose = true,
     this.enableProgressText = true,
     this.enableProgressBar = true,
     this.enableProgressBarDrag = true,
@@ -187,6 +198,7 @@ class BetterPlayerControlsConfiguration {
     this.progressBarBackgroundColor = Colors.white60,
     this.controlsHideTime = const Duration(milliseconds: 300),
     this.customControlsBuilder,
+    this.onCloseTap,
     this.playerTheme,
     this.showControls = true,
     this.showControlsOnInitialize = true,
@@ -231,9 +243,11 @@ class BetterPlayerControlsConfiguration {
       fullscreenEnableIcon: CupertinoIcons.arrow_up_left_arrow_down_right,
       fullscreenDisableIcon: CupertinoIcons.arrow_down_right_arrow_up_left,
       playIcon: CupertinoIcons.play_arrow_solid,
+      muteIcon: CupertinoIcons.volume_down,
+      unMuteIcon: CupertinoIcons.volume_off,
       pauseIcon: CupertinoIcons.pause_solid,
-      skipBackIcon: CupertinoIcons.gobackward_15,
-      skipForwardIcon: CupertinoIcons.goforward_15,
+      skipBackIcon: CupertinoIcons.gobackward_10,
+      skipForwardIcon: CupertinoIcons.gobackward_10,
     );
   }
 

@@ -274,6 +274,37 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
     );
   }
 
+  Widget _buildCloseButton(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double iconSize,
+    double buttonPadding,
+  ) {
+    return GestureDetector(
+      onTap: onCloseTap,
+      child: AnimatedOpacity(
+        opacity: controlsNotVisible ? 0.0 : 1.0,
+        duration: _controlsConfiguration.controlsHideTime,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: Container(
+            decoration: BoxDecoration(color: backgroundColor),
+            child: Container(
+              height: barHeight,
+              padding: EdgeInsets.symmetric(horizontal: buttonPadding),
+              child: Icon(
+                _controlsConfiguration.closeIcon,
+                color: iconColor,
+                size: iconSize,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   GestureDetector _buildMoreButton(
     VideoPlayerController? controller,
     Color backgroundColor,
@@ -283,23 +314,17 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
     double buttonPadding,
   ) {
     return GestureDetector(
-      onTap: () {
-        onShowMoreClicked();
-      },
+      onTap: onShowMoreClicked,
       child: AnimatedOpacity(
         opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10.0),
           child: Container(
-            decoration: BoxDecoration(
-              color: backgroundColor,
-            ),
+            decoration: BoxDecoration(color: backgroundColor),
             child: Container(
               height: barHeight,
-              padding: EdgeInsets.symmetric(
-                horizontal: buttonPadding,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: buttonPadding),
               child: Icon(
                 _controlsConfiguration.overflowMenuIcon,
                 color: iconColor,
@@ -464,6 +489,16 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
       ),
       child: Row(
         children: <Widget>[
+          if (_controlsConfiguration.enableClose) ...[
+            _buildCloseButton(
+              backgroundColor,
+              iconColor,
+              barHeight,
+              iconSize,
+              buttonPadding,
+            ),
+            const SizedBox(width: 4),
+          ],
           if (_controlsConfiguration.enableFullscreen)
             _buildExpandButton(
               backgroundColor,
@@ -471,12 +506,8 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
               barHeight,
               iconSize,
               buttonPadding,
-            )
-          else
-            const SizedBox(),
-          const SizedBox(
-            width: 4,
-          ),
+            ),
+          const SizedBox(width: 4),
           if (_controlsConfiguration.enablePip)
             _buildPipButton(
               backgroundColor,
@@ -496,12 +527,8 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
               barHeight,
               iconSize,
               buttonPadding,
-            )
-          else
-            const SizedBox(),
-          const SizedBox(
-            width: 4,
-          ),
+            ),
+          const SizedBox(width: 4),
           if (_controlsConfiguration.enableOverflowMenu)
             _buildMoreButton(
               _controller,

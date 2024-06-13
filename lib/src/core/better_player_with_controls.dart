@@ -20,16 +20,15 @@ class BetterPlayerWithControls extends StatefulWidget {
 }
 
 class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
-  BetterPlayerSubtitlesConfiguration get subtitlesConfiguration =>
-      widget.controller!.betterPlayerConfiguration.subtitlesConfiguration;
+  final StreamController<bool> playerVisibilityStreamController = StreamController();
+  bool _initialized = false;
+  StreamSubscription? _controllerEventSubscription;
+
+  BetterPlayerSubtitlesConfiguration get subtitlesConfiguration {
+    return widget.controller!.betterPlayerConfiguration.subtitlesConfiguration;
+  }
 
   BetterPlayerControlsConfiguration get controlsConfiguration => widget.controller!.betterPlayerControlsConfiguration;
-
-  final StreamController<bool> playerVisibilityStreamController = StreamController();
-
-  bool _initialized = false;
-
-  StreamSubscription? _controllerEventSubscription;
 
   @override
   void initState() {
@@ -47,19 +46,19 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     super.didUpdateWidget(oldWidget);
   }
 
-  @override
-  void dispose() {
-    playerVisibilityStreamController.close();
-    _controllerEventSubscription?.cancel();
-    super.dispose();
-  }
-
   void _onControllerChanged(BetterPlayerControllerEvent event) {
     setState(() {
       if (!_initialized) {
         _initialized = true;
       }
     });
+  }
+
+  @override
+  void dispose() {
+    playerVisibilityStreamController.close();
+    _controllerEventSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -96,7 +95,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     }
   }
 
-  Container _buildPlayerWithControls(BetterPlayerController betterPlayerController, BuildContext context) {
+  Widget _buildPlayerWithControls(BetterPlayerController betterPlayerController, BuildContext context) {
     final configuration = betterPlayerController.betterPlayerConfiguration;
     var rotation = configuration.rotation;
 
@@ -105,35 +104,32 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       rotation = 0;
     }
     if (betterPlayerController.betterPlayerDataSource == null) {
-      return Container();
+      return const SizedBox.shrink();
     }
     _initialized = true;
 
     final bool placeholderOnTop = betterPlayerController.betterPlayerConfiguration.placeholderOnTop;
-    // ignore: avoid_unnecessary_containers
-    return Container(
-      child: Stack(
-        fit: StackFit.passthrough,
-        children: <Widget>[
-          if (placeholderOnTop) _buildPlaceholder(betterPlayerController),
-          Transform.rotate(
-            angle: rotation * pi / 180,
-            child: _BetterPlayerVideoFitWidget(
-              betterPlayerController,
-              betterPlayerController.getFit(),
-            ),
+    return Stack(
+      fit: StackFit.passthrough,
+      children: <Widget>[
+        if (placeholderOnTop) _buildPlaceholder(betterPlayerController),
+        Transform.rotate(
+          angle: rotation * pi / 180,
+          child: _BetterPlayerVideoFitWidget(
+            betterPlayerController,
+            betterPlayerController.getFit(),
           ),
-          betterPlayerController.betterPlayerConfiguration.overlay ?? const SizedBox.shrink(),
-          BetterPlayerSubtitlesDrawer(
-            betterPlayerController: betterPlayerController,
-            betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
-            subtitles: betterPlayerController.subtitlesLines,
-            playerVisibilityStream: playerVisibilityStreamController.stream,
-          ),
-          if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
-          SafeArea(child: _buildControls(context, betterPlayerController)),
-        ],
-      ),
+        ),
+        betterPlayerController.betterPlayerConfiguration.overlay ?? const SizedBox.shrink(),
+        BetterPlayerSubtitlesDrawer(
+          betterPlayerController: betterPlayerController,
+          betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
+          subtitles: betterPlayerController.subtitlesLines,
+          playerVisibilityStream: playerVisibilityStreamController.stream,
+        ),
+        if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
+        SafeArea(child: _buildControls(context, betterPlayerController)),
+      ],
     );
   }
 
@@ -166,7 +162,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       }
     }
 
-    return const SizedBox();
+    return const SizedBox.shrink();
   }
 
   Widget _buildMaterialControl() {

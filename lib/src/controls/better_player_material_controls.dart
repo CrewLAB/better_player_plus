@@ -188,10 +188,12 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    if (_controlsConfiguration.enableClose) ...[
+                      _buildCloseButton(),
+                      const Spacer(),
+                    ],
                     if (_controlsConfiguration.enablePip)
-                      _buildPipButtonWrapperWidget(controlsNotVisible, _onPlayerHide)
-                    else
-                      const SizedBox(),
+                      _buildPipButtonWrapperWidget(controlsNotVisible, _onPlayerHide),
                     _buildMoreButton(),
                   ],
                 ),
@@ -236,18 +238,29 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
               ),
             ),
           );
-        } else {
-          return const SizedBox();
         }
+
+        return const SizedBox.shrink();
       },
+    );
+  }
+
+  Widget _buildCloseButton() {
+    return BetterPlayerMaterialClickableWidget(
+      onTap: onCloseTap,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          _controlsConfiguration.closeIcon,
+          color: _controlsConfiguration.iconsColor,
+        ),
+      ),
     );
   }
 
   Widget _buildMoreButton() {
     return BetterPlayerMaterialClickableWidget(
-      onTap: () {
-        onShowMoreClicked();
-      },
+      onTap: onShowMoreClicked,
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Icon(

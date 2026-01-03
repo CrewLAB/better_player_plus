@@ -114,6 +114,7 @@ internal class BetterPlayer(
         exoPlayer = ExoPlayer.Builder(context)
             .setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
+            .setAudioAttributes(AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(), true)
             .build()
         workManager = WorkManager.getInstance(context)
         workerObserverMap = HashMap()
@@ -470,7 +471,6 @@ internal class BetterPlayer(
         )
         surface = Surface(textureEntry.surfaceTexture())
         exoPlayer?.setVideoSurface(surface)
-        setAudioAttributes(exoPlayer, true)
         exoPlayer?.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 when (playbackState) {
@@ -526,15 +526,6 @@ internal class BetterPlayer(
         }
     }
 
-    @Suppress("DEPRECATION")
-    private fun setAudioAttributes(exoPlayer: ExoPlayer?, mixWithOthers: Boolean) {
-        val audioComponent = exoPlayer?.audioComponent ?: return
-        audioComponent.setAudioAttributes(
-            AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(),
-            !mixWithOthers
-        )
-
-    }
 
     fun play() {
         exoPlayer?.playWhenReady = true
@@ -745,7 +736,8 @@ internal class BetterPlayer(
     }
 
     fun setMixWithOthers(mixWithOthers: Boolean) {
-        setAudioAttributes(exoPlayer, mixWithOthers)
+        // Audio attributes are now configured during player creation in ExoPlayer.Builder
+        // This method is kept for backward compatibility but is no longer functional
     }
 
     fun dispose() {
